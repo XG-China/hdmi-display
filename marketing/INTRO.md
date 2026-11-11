@@ -36,6 +36,11 @@ HDMI Display 把飞牛 fnOS / Debian NAS 变成一台多屏主机：
 
 ## 功能三：远程桌面 RDP / VNC 自动识别
 
+![Windows 11 RDP 桌面](rdp-demo.jpg)
+
+上图是 Windows 11 通过 RDP 输出到独立 HDMI 接口的实际画面，登录账号为 `hdmi`；
+桌面、任务栏、开始菜单和键鼠都属于这块屏，不是把 NAS 桌面镜像出去。
+
 后台不再要求手动选 RDP 或 VNC，直接填地址：
 
 - `用户:密码@主机[:端口]` → 自动按 **RDP**

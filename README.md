@@ -18,6 +18,11 @@ HDMI Display 是给 fnOS / Debian 12 用的多屏独立输出工具：每个 HDM
 
 ![Web 管理面板](marketing/panel-demo.png)
 
+Windows 11 远程桌面：通过 RDP 输出到独立 HDMI 接口，使用 `hdmi` 账号登录，
+桌面、任务栏和键鼠都走这块屏，不是屏幕镜像。
+
+![Windows 11 RDP 桌面](marketing/rdp-demo.jpg)
+
 视频 HUD / 中文路径显示：
 
 ![HUD 中文路径](marketing/hud-demo-early.jpg)
