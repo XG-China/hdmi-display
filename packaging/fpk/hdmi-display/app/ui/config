@@ -1,0 +1,15 @@
+{
+    ".url": {
+        "hdmi-display.main": {
+            "title": "${entry.title}",
+            "desc": "${entry.desc}",
+            "icon": "images/icon_{0}.png",
+            "type": "iframe",
+            "protocol": "",
+            "gatewayPrefix": "/app/hdmi-display",
+            "gatewaySocket": "app.sock",
+            "url": "/app/hdmi-display/",
+            "allUsers": false
+        }
+    }
+}

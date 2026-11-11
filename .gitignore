@@ -1,0 +1,8 @@
+build/
+*.o
+*.d
+hdmi_display
+*.fpk
+*.log
+.DS_Store
+Thumbs.db

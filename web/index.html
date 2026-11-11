@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HDMI Display 控制台</title>
+  <link rel="stylesheet" href="style.css?v=__V__">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">HD</div>
+        <div>
+          <h1>HDMI Display</h1>
+          <p id="sys" class="hint">连接中…</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="refreshBtn" class="ghost-btn" type="button">刷新</button>
+        <button id="quitBtn" class="danger-btn" type="button">停止服务</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <h2>输出接口</h2>
+            <p class="hint">每个接口独立输出。选择源和分辨率后点“应用”；停用不会删除配置，重新应用即可恢复。</p>
+          </div>
+        </div>
+        <div id="outputs" class="out-grid"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <h2>输入设备 → 屏幕</h2>
+            <p class="hint">键盘/鼠标可以绑定到「远程连接 / 网页」整屏，或包含这些层的画中画小窗；纯视频/图片/仪表盘/测试图不会出现在这里。绑定到网页屏后可点击、输入和滚动；画中画按小窗坐标映射，点小窗外不会误触。标签显示设备的真实类型和用途。</p>
+          </div>
+        </div>
+        <div id="inputs" class="inputs"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <h2>使用说明</h2>
+            <p class="hint">远程连接只有一个输出方式“远程连接”，后台会根据地址自动判断是 RDP 还是 VNC，不需要手动加前缀。</p>
+          </div>
+        </div>
+        <div class="rdp-help">
+          <p><b>RDP（Windows 远程桌面）</b>：地址格式为 <code>用户:密码@主机[:端口]</code>。后台看到 <code>@</code> 就按 RDP 连接，例如
+            <code>Administrator:密码@10.0.0.5:3389</code>。先在 Windows 上以管理员运行 <code>enable-rdp.ps1</code>（开启 RDP、放行防火墙、把帧率上限提到 60fps），重启一次。默认连接控制台会话（+admin），地址后加 <code>?normal</code> 改用独立会话。</p>
+          <p><b>VNC（虚拟机/无 RDP 设备）</b>：地址格式为 <code>主机:端口</code>、<code>/var/run/vms/xxx.vnc.sock</code> 或 <code>/path/to/socket</code>。后台看到本地 socket 路径或非 RDP 地址就按 VNC 连接，例如
+            <code>10.0.0.20:5900</code> 或 <code>/var/run/vms/xxx.vnc.sock</code>。</p>
+          <p class="hint">本机虚拟机由系统自动扫描 <code>/var/run/vms/*.vnc.sock</code>。选择“远程连接”后会出现“本机 VNC 虚拟机”下拉框；有一个或多个虚拟机时直接选择即可，也可以手动填写 VNC 地址。VNC 仅支持无密码认证；需要 Windows 音频和更好性能时请用 RDP。</p>
+          <a class="primary-btn" id="dl-rdp" download href="#">下载 RDP 60fps 脚本</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>HDMI Display · 多屏独立输出 · 视频 / VNC / RDP / 网页 / 画中画</span>
+      <span id="version" class="hint"></span>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  <script defer src="app.js?v=__V__"></script>
+</body>
+</html>

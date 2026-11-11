@@ -1,0 +1,59 @@
+[
+  {
+    "stepTitle": "HDMI Display 安装设置",
+    "items": [
+      {
+        "type": "text",
+        "field": "wizard_port",
+        "label": "网页管理面板端口",
+        "initValue": "8080",
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入端口号"
+          },
+          {
+            "pattern": "^[0-9]+$",
+            "message": "端口只能包含数字"
+          }
+        ]
+      },
+      {
+        "type": "radio",
+        "field": "wizard_stop_compositor",
+        "label": "appliance-compositor（电视合成器）",
+        "initValue": "false",
+        "options": [
+          {
+            "label": "保持运行（HDMI Display 可能无法取得 DRM 主控权）",
+            "value": "false"
+          },
+          {
+            "label": "HDMI Display 运行时停止它，停止应用时自动恢复",
+            "value": "true"
+          }
+        ]
+      },
+      {
+        "type": "radio",
+        "field": "wizard_web_deps",
+        "label": "网页源依赖（xvfb + chromium）",
+        "initValue": "keep",
+        "options": [
+          {
+            "label": "不安装（之后可在应用配置中再选择，或手动执行 apt install xvfb chromium）",
+            "value": "keep"
+          },
+          {
+            "label": "现在通过 apt 安装（约 300 MB，需要联网）",
+            "value": "install"
+          }
+        ]
+      },
+      {
+        "type": "tips",
+        "helpText": "HDMI Display 需要 DRM/KMS 主控权。安装完成后打开应用，即可为每个 HDMI/DP 接口选择信号源。视频、图片、VNC、RDP 和画中画不需要额外软件；网页源需要 xvfb + chromium，可在上面的选项里一次性安装。"
+      }
+    ]
+  }
+]

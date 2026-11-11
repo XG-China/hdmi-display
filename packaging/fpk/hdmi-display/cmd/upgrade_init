@@ -1,0 +1,5 @@
+#!/bin/bash
+. "$(dirname "$0")/common"
+mark_active
+stop_all
+exit 0

@@ -1,0 +1,33 @@
+HDMI Display - third-party notices
+
+This package contains or links against the following third-party components.
+The full license texts are shipped with the corresponding upstream projects;
+the most important notices are summarized here.
+
+1. FFmpeg 5.1.8
+   License: LGPL-2.1-or-later (this build does not enable GPL components)
+   Project: https://ffmpeg.org/
+   The shared libraries are bundled in app/lib and can be replaced by the user.
+   Source code and the exact minimal build configuration are available from:
+   - https://ffmpeg.org/releases/ffmpeg-5.1.8.tar.xz
+   - or the source archive distributed with this release
+     (packaging/build-ffmpeg-min.sh, build-kit/vendor/ffmpeg-5.1.8-git.tar.gz)
+
+2. FreeRDP / WinPR 3.x
+   License: Apache License 2.0
+   Project: https://www.freerdp.com/
+   See the upstream NOTICE and LICENSE files.
+
+3. Noto Sans CJK SC
+   License: SIL Open Font License 1.1
+   Project: https://github.com/notofonts/noto-cjk
+   The 16x16 bitmap glyph table in font_cjk.c is generated from
+   NotoSansCJKsc-Regular.otf. The OFL text is in OFL-Noto.txt.
+
+4. X11 / XCB / libdrm / libva / OpenSSL / ALSA / libfuse / zlib / cJSON
+   These libraries keep their upstream licenses (MIT-style, Apache-2.0,
+   LGPL-2.1-or-later, zlib, etc.). Their license files are provided by the
+   corresponding Debian packages and upstream projects.
+
+No trademark rights are granted. "Windows" and "RDP" are names of Microsoft
+products/protocols and are used only to describe compatibility.

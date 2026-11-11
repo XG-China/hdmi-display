@@ -1,0 +1,9 @@
+#!/bin/bash
+# App Center start/stop/status.
+. "$(dirname "$0")/common"
+case "$1" in
+    start)  start_all; exit 0 ;;
+    stop)   stop_all;  exit 0 ;;
+    status) systemctl is-active --quiet "$UNIT" && exit 0 || exit 3 ;;
+    *)      exit 1 ;;
+esac

@@ -1,0 +1,24 @@
+#!/bin/bash
+. "$(dirname "$0")/common"
+
+remove_unit
+clear_active_marker
+
+# Runtime/socket/temp traces are always removed.
+[ -n "${TRIM_APPDEST:-}" ] && rm -f "$TRIM_APPDEST/app.sock" 2>/dev/null || true
+rm -rf "/run/$APP" 2>/dev/null || true
+rm -rf /tmp/hdmi-web-* 2>/dev/null || true
+
+case "${wizard_remove_data:-remove}" in
+    remove)
+        # Full clean uninstall: configuration, saved sources and the app dir.
+        [ -n "${TRIM_PKGETC:-}" ] && rm -rf "$TRIM_PKGETC"
+        [ -n "${TRIM_PKGVAR:-}" ] && rm -rf "$TRIM_PKGVAR"
+        [ -n "${TRIM_APPDEST:-}" ] && rm -rf "$TRIM_APPDEST"
+        ;;
+    keep)
+        # Keep the config/data only; runtime traces are already gone.
+        ;;
+esac
+
+exit 0

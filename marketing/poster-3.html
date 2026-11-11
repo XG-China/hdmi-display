@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>HDMI Display Poster 3</title>
+<link rel="stylesheet" href="posters.css">
+</head>
+<body>
+<div class="poster p3" role="img" aria-label="有多少视频输出口就能带多少块屏宣传图">
+  <div class="bg-grid"></div>
+  <div class="glow g-blue"></div>
+  <div class="glow g-orange"></div>
+
+  <div class="brand"><b>HDMI DISPLAY</b> <span>· 多屏独立输出</span></div>
+
+  <h1>有几个<br>视频输出口<br><em>就能带几块屏</em></h1>
+  <div class="sub">每个 HDMI / DP 接口一条独立 DRM/KMS 通道。<br>视频、RDP、VNC、网页、画中画，各占一屏。</div>
+  <div class="chips">
+    <span class="chip o">不是镜像</span>
+    <span class="chip">多 GPU / 多卡</span>
+    <span class="chip">一屏一套键鼠</span>
+    <span class="chip">中文管理面板</span>
+  </div>
+  <div class="footer"><b>飞牛 fnOS</b> · x86_64 · 无需桌面环境 · 按接口扩展</div>
+
+  <svg class="io" viewBox="0 0 900 660">
+    <defs>
+      <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#26384f"/>
+        <stop offset=".45" stop-color="#101a29"/>
+        <stop offset="1" stop-color="#070c14"/>
+      </linearGradient>
+      <linearGradient id="port" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#334d6b"/>
+        <stop offset="1" stop-color="#0b1320"/>
+      </linearGradient>
+      <linearGradient id="cableA" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#22d3ee"/>
+        <stop offset="1" stop-color="#2563eb"/>
+      </linearGradient>
+      <linearGradient id="cableB" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#fbbf24"/>
+        <stop offset="1" stop-color="#f97316"/>
+      </linearGradient>
+      <filter id="soft"><feGaussianBlur stdDeviation="8"/></filter>
+    </defs>
+
+    <rect x="34" y="90" width="820" height="470" rx="30" fill="url(#metal)" stroke="#334b68" stroke-width="2"/>
+    <rect x="34" y="90" width="820" height="470" rx="30" fill="none" stroke="rgba(120,200,255,.12)" stroke-width="10"/>
+    <text x="72" y="150" fill="#8ea8c4" font-size="18" letter-spacing="8" font-family="Consolas,monospace">NAS REAR I/O</text>
+    <circle cx="806" cy="140" r="6" fill="#22d3ee"/>
+
+    <g transform="translate(82 250)">
+      <path d="M0 18 L22 0 H150 L172 18 V62 L150 80 H22 L0 62 Z" fill="url(#port)" stroke="#4d6b8d" stroke-width="2"/>
+      <path d="M26 30 H146 V50 H26 Z" fill="#060b12" stroke="#29445f"/>
+      <text x="0" y="116" fill="#8fa9c5" font-size="15" font-family="Consolas,monospace">HDMI / DP 1</text>
+    </g>
+    <g transform="translate(292 250)">
+      <path d="M0 18 L22 0 H150 L172 18 V62 L150 80 H22 L0 62 Z" fill="url(#port)" stroke="#4d6b8d" stroke-width="2"/>
+      <path d="M26 30 H146 V50 H26 Z" fill="#060b12" stroke="#29445f"/>
+      <text x="0" y="116" fill="#8fa9c5" font-size="15" font-family="Consolas,monospace">HDMI / DP 2</text>
+    </g>
+    <g transform="translate(502 250)">
+      <path d="M0 18 L22 0 H150 L172 18 V62 L150 80 H22 L0 62 Z" fill="url(#port)" stroke="#4d6b8d" stroke-width="2"/>
+      <path d="M26 30 H146 V50 H26 Z" fill="#060b12" stroke="#29445f"/>
+      <text x="0" y="116" fill="#8fa9c5" font-size="15" font-family="Consolas,monospace">HDMI / DP 3</text>
+    </g>
+    <g transform="translate(712 250)">
+      <path d="M0 18 L22 0 H150 L172 18 V62 L150 80 H22 L0 62 Z" fill="url(#port)" stroke="#4d6b8d" stroke-width="2"/>
+      <path d="M26 30 H146 V50 H26 Z" fill="#060b12" stroke="#29445f"/>
+      <text x="0" y="116" fill="#8fa9c5" font-size="15" font-family="Consolas,monospace">HDMI / DP 4</text>
+    </g>
+
+    <path d="M254 290 C420 290 480 430 900 430" fill="none" stroke="url(#cableA)" stroke-width="9" stroke-linecap="round" opacity=".9" filter="url(#soft)"/>
+    <path d="M254 290 C420 290 480 430 900 430" fill="none" stroke="url(#cableA)" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M464 290 C600 290 620 360 900 360" fill="none" stroke="url(#cableB)" stroke-width="9" stroke-linecap="round" opacity=".75" filter="url(#soft)"/>
+    <path d="M464 290 C600 290 620 360 900 360" fill="none" stroke="url(#cableB)" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M674 290 C760 290 780 320 900 320" fill="none" stroke="url(#cableA)" stroke-width="8" stroke-linecap="round" opacity=".65" filter="url(#soft)"/>
+    <path d="M674 290 C760 290 780 320 900 320" fill="none" stroke="url(#cableA)" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M884 290 C900 290 900 280 900 280" fill="none" stroke="url(#cableB)" stroke-width="6" stroke-linecap="round"/>
+
+    <text x="72" y="500" fill="#6f8aa6" font-size="15" letter-spacing="3" font-family="Consolas,monospace">INDEPENDENT OUTPUTS · NOT MIRRORED</text>
+  </svg>
+</div>
+</body>
+</html>

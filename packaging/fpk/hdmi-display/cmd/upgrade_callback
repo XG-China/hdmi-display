@@ -1,0 +1,5 @@
+#!/bin/bash
+. "$(dirname "$0")/common"
+install_unit
+restore_active
+exit 0

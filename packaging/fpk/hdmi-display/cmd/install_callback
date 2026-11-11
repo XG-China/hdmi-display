@@ -1,0 +1,14 @@
+#!/bin/bash
+. "$(dirname "$0")/common"
+check_binary
+clear_active_marker
+save_settings
+web_deps_install
+install_unit
+
+# fnOS semantics: a freshly installed app shows "Open" and is running.
+# A failing DRM/compositor must not fail the App Center installation itself.
+try_start
+echo "HDMI Display 已安装并启动（应用中心显示“打开”）。" \
+    >> "${TRIM_TEMP_LOGFILE:-/dev/stderr}"
+exit 0

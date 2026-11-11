@@ -1,0 +1,7 @@
+#!/bin/bash
+. "$(dirname "$0")/common"
+save_settings
+web_deps_install
+install_unit
+restore_active
+exit 0

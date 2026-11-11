@@ -1,0 +1,229 @@
+#!/bin/bash
+# Shared definitions for the HDMI Display lifecycle scripts (sourced).
+#
+# The app needs real DRM/KMS master access. On a Fygo OS box where
+# appliance-compositor (Fygo Cinema / TV apps) is running, that compositor
+# already owns the displays; the install wizard's "stop compositor" switch
+# makes this unit stop it while HDMI Display runs and bring it back on stop.
+
+APP=hdmi-display
+UNIT=$APP
+UNIT_FILE=/etc/systemd/system/$APP.service
+DEFAULT_PORT=8080
+ACTIVE_MARK=/run/$APP.was-active
+APPDEST="${TRIM_APPDEST:-/usr/local/apps/@appcenter/$APP}"
+CONF_DIR="${TRIM_PKGETC:-/usr/local/apps/@appconf/$APP}"
+SETTINGS_DIR="$CONF_DIR"
+SETTINGS_FILE="$SETTINGS_DIR/install.env"
+
+# Remember whether the app was running before an upgrade/config change so a
+# running app is restarted, while a stopped app stays stopped (fnOS rule).
+mark_active() {
+    if systemctl is-active --quiet "$UNIT"; then
+        : > "$ACTIVE_MARK"
+    else
+        rm -f "$ACTIVE_MARK"
+    fi
+}
+
+restore_active() {
+    if [ -e "$ACTIVE_MARK" ]; then
+        rm -f "$ACTIVE_MARK"
+        try_start
+    fi
+}
+
+clear_active_marker() {
+    rm -f "$ACTIVE_MARK"
+}
+
+# Persist wizard choices so an App Center upgrade (which does not pass the
+# install environment again) keeps the configured port and compositor policy
+# instead of silently falling back to defaults.
+save_settings() {
+    local old_port="" old_stop=""
+    if [ -r "$SETTINGS_FILE" ]; then
+        old_port=$(sed -n 's/^port=//p' "$SETTINGS_FILE" | head -1)
+        old_stop=$(sed -n 's/^stop_compositor=//p' "$SETTINGS_FILE" | head -1)
+    fi
+
+    local port="${wizard_port:-}"
+    local stop="${wizard_stop_compositor:-}"
+    case "$stop" in
+        true|yes|1|on)   stop=true ;;
+        false|no|0|off)  stop=false ;;
+        *)               stop="$old_stop" ;;
+    esac
+    [ -n "$port" ] || port="$old_port"
+    [ -n "$port" ] || port="$DEFAULT_PORT"
+    [ -n "$stop" ] || stop=false
+
+    mkdir -p "$SETTINGS_DIR" 2>/dev/null || true
+    local tmp="$SETTINGS_FILE.tmp"
+    if printf 'port=%s\nstop_compositor=%s\n' "$port" "$stop" > "$tmp" 2>/dev/null; then
+        mv -f "$tmp" "$SETTINGS_FILE" 2>/dev/null || rm -f "$tmp"
+    fi
+}
+
+read_settings() {
+    [ -r "$SETTINGS_FILE" ] || return 0
+    local p s
+    p=$(sed -n 's/^port=//p' "$SETTINGS_FILE" | head -1)
+    s=$(sed -n 's/^stop_compositor=//p' "$SETTINGS_FILE" | head -1)
+    [ -n "$p" ] && settings_port="$p"
+    [ -n "$s" ] && settings_stop="$s"
+}
+
+fail() {
+    echo "$*" > "${TRIM_TEMP_LOGFILE:-/dev/stderr}"
+    exit 1
+}
+
+# Build the systemd unit. Uses the install/config wizard values when present,
+# defaults otherwise (cmd/main can be called before an install callback).
+install_unit() {
+    local settings_port="" settings_stop=""
+    read_settings
+    local port="${wizard_port:-${settings_port:-$DEFAULT_PORT}}"
+    local stop="${wizard_stop_compositor:-}"
+    case "$stop" in
+        true|yes|1|on|false|no|0|off) ;;
+        *) stop="${settings_stop:-false}" ;;
+    esac
+    local comp=""
+    case "$stop" in
+        true|yes|1|on)
+            comp="Conflicts=appliance-compositor.service
+After=appliance-compositor.service
+ExecStartPre=-/bin/sh -c 'systemctl stop appliance-compositor.service 2>/dev/null || true'
+ExecStopPost=-/bin/sh -c 'systemctl start appliance-compositor.service 2>/dev/null || true'"
+            ;;
+    esac
+
+    local libenv=""
+    [ -d "$APPDEST/lib" ] && libenv="Environment=LD_LIBRARY_PATH=$APPDEST/lib"
+    local osslenv=""
+    [ -d "$APPDEST/lib/ossl-modules" ] && \
+        osslenv="Environment=OPENSSL_MODULES=$APPDEST/lib/ossl-modules"
+
+    cat > "$UNIT_FILE" <<UNIT
+[Unit]
+Description=HDMI Display multi-screen wall
+After=systemd-udev-settle.service
+Wants=systemd-udev-settle.service
+$comp
+
+[Service]
+Type=simple
+User=root
+Environment=HOME=/root
+Environment=XDG_RUNTIME_DIR=/run/$APP
+Environment=PATH=$APPDEST/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+RuntimeDirectory=$APP
+$libenv
+$osslenv
+ExecStart=$APPDEST/bin/hdmi_display --config $CONF_DIR/hdmi_display.conf --hwaccel --web-port $port --web-bind 0.0.0.0 --web-dir $APPDEST/web --web-socket $APPDEST/app.sock --web-prefix /app/$APP
+Restart=always
+RestartSec=3
+KillMode=mixed
+TimeoutStopSec=10
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+    systemctl daemon-reload
+    # Enable/start is owned by App Center: install opens the app (try_start),
+    # stop disables it, and enable/start enables it again.
+}
+
+remove_unit() {
+    systemctl stop "$UNIT" >/dev/null 2>&1 || true
+    systemctl disable "$UNIT" >/dev/null 2>&1 || true
+    systemctl reset-failed "$UNIT" >/dev/null 2>&1 || true
+    rm -f "$UNIT_FILE"
+    rm -rf "/etc/systemd/system/${UNIT}.service.d"
+    systemctl daemon-reload
+}
+
+start_all() {
+    [ -f "$UNIT_FILE" ] || install_unit
+    systemctl enable "$UNIT" >/dev/null 2>&1 || true
+    systemctl restart "$UNIT" || fail "HDMI Display 启动失败，请查看：journalctl -u $UNIT"
+}
+
+# Like start_all, but used by install/config/upgrade where a DRM/compositor
+# failure must not fail the App Center operation itself.
+try_start() {
+    [ -f "$UNIT_FILE" ] || install_unit
+    systemctl enable "$UNIT" >/dev/null 2>&1 || true
+    systemctl restart "$UNIT" 2>/dev/null || \
+        echo "提示：HDMI Display 未能启动，请查看：journalctl -u $UNIT" \
+            >> "${TRIM_TEMP_LOGFILE:-/dev/stderr}"
+}
+
+stop_all() {
+    systemctl stop "$UNIT" 2>/dev/null || true
+    systemctl disable "$UNIT" >/dev/null 2>&1 || true
+}
+
+# Runs from install_init, before App Center extracts app.tgz into
+# $TRIM_APPDEST: only system-level prerequisites can be checked here.
+check_system() {
+    [ -e /dev/dri/card0 ] || fail "未找到 DRM 设备（/dev/dri/card0）。
+
+HDMI Display 需要支持 DRM/KMS 的显卡，并连接 HDMI/DP 显示器或电视。"
+}
+
+# Runs from install_callback, after $TRIM_APPDEST is populated.
+check_binary() {
+    [ -x "$APPDEST/bin/hdmi_display" ] \
+        || fail "安装包中缺少 hdmi_display 主程序（应为 $APPDEST/bin/hdmi_display）。"
+
+    local missing
+    missing=$(LD_LIBRARY_PATH="$APPDEST/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+              ldd "$APPDEST/bin/hdmi_display" 2>/dev/null |
+              awk '/not found/{print $1}' | sort -u | tr '\n' ' ')
+    [ -z "$missing" ] || fail "缺少运行库：$missing
+
+$APPDEST/lib 中的运行时文件不完整，请重新安装本 fpk。
+如果从源码构建，请运行 packaging/build-fpk.sh（BUNDLE_LIBS=1）。"
+}
+
+# Optional web-page dependencies. The fnOS App Center does not provide
+# xvfb/chromium; the install/config wizard offers a one-click apt install.
+web_deps_install() {
+    case "${wizard_web_deps:-keep}" in
+        install|true|yes|1|on) ;;
+        *) return 0 ;;
+    esac
+
+    local log="${TRIM_TEMP_LOGFILE:-/dev/stderr}"
+    if command -v Xvfb >/dev/null 2>&1 &&
+       { command -v chromium >/dev/null 2>&1 ||
+         command -v chromium-browser >/dev/null 2>&1 ||
+         command -v google-chrome >/dev/null 2>&1; }; then
+        echo "网页源依赖已安装（Xvfb + Chromium）" >> "$log"
+        return 0
+    fi
+
+    echo "正在通过 apt 安装网页源依赖 xvfb + chromium（约 300 MB）..." >> "$log"
+    apt-get update >> "$log" 2>&1 || true
+    if command -v timeout >/dev/null 2>&1; then
+        DEBIAN_FRONTEND=noninteractive timeout 900 \
+            apt-get install -y --no-install-recommends xvfb chromium >> "$log" 2>&1 || true
+    else
+        DEBIAN_FRONTEND=noninteractive \
+            apt-get install -y --no-install-recommends xvfb chromium >> "$log" 2>&1 || true
+    fi
+
+    if command -v Xvfb >/dev/null 2>&1 &&
+       { command -v chromium >/dev/null 2>&1 ||
+         command -v chromium-browser >/dev/null 2>&1 ||
+         command -v google-chrome >/dev/null 2>&1; }; then
+        echo "网页源依赖安装完成" >> "$log"
+    else
+        echo "提示：网页源依赖安装失败，请手动运行：apt-get install -y xvfb chromium" >> "$log"
+    fi
+}

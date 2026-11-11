@@ -1,0 +1,19 @@
+#!/bin/bash
+. "$(dirname "$0")/common"
+check_system
+
+if systemctl is-active --quiet appliance-compositor.service; then
+    case "${wizard_stop_compositor:-false}" in
+        true|yes|1|on) ;;
+        *)
+            echo "提示：appliance-compositor 正在运行并占用 DRM 主控权。如果 HDMI Display 无法启动，请在应用配置中选择“HDMI Display 运行时停止它”。" \
+                >> "${TRIM_TEMP_LOGFILE:-/dev/stderr}"
+            ;;
+    esac
+fi
+
+# Stop an older copy first; install_callback starts the new one so App Center
+# shows "打开". A user-stopped install stays stopped across a reinstall.
+stop_all
+clear_active_marker
+exit 0

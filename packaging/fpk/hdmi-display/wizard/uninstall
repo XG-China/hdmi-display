@@ -1,0 +1,27 @@
+[
+  {
+    "stepTitle": "卸载 HDMI Display",
+    "items": [
+      {
+        "type": "tips",
+        "helpText": "systemd 服务、socket、运行时目录和临时文件会始终删除。默认的“彻底卸载”还会删除配置、已保存的信号源和应用数据；只有在希望以后重装时继续使用时，才选择“保留配置与媒体”。"
+      },
+      {
+        "type": "radio",
+        "field": "wizard_remove_data",
+        "label": "配置与数据",
+        "initValue": "remove",
+        "options": [
+          {
+            "label": "删除配置、已保存的信号源和应用数据（彻底卸载）",
+            "value": "remove"
+          },
+          {
+            "label": "保留配置与媒体，方便以后重装使用",
+            "value": "keep"
+          }
+        ]
+      }
+    ]
+  }
+]
