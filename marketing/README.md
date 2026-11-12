@@ -1,5 +1,7 @@
 # HDMI Display 宣传素材
 
+完整代码导读见 [`../docs/CODE.md`](../docs/CODE.md)。
+
 ## 文件
 
 - `INTRO.md`：完整图文介绍，逐项说明功能，可直接发 GitHub/公众号/论坛

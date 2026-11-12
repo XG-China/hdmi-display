@@ -19,6 +19,12 @@ bash packaging/build-fpk.sh
 
 Please keep the build warning-free with `-Wall -Wextra`.
 
+## Code map
+
+See [`docs/CODE.md`](docs/CODE.md) for the full per-file code guide:
+architecture, thread model, source adapters, DRM/KMS backend, web API,
+configuration, packaging and extension points.
+
 ## Issues
 
 For a useful bug report, include:
