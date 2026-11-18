@@ -75,10 +75,15 @@ static void deliver(in_dev *d, const input_event *ev)
 
 static uint32_t linux_keysym(uint16_t code, int shift, int caps)
 {
-    /* VNC uses the keysym as the character to type; the X clients send the
-     * shifted form as well. Apply the local Shift/Caps state so a guest sees
-     * the same case even when its VNC server does not combine modifiers. */
-    int upper = (shift != 0) ^ (caps != 0);
+    /* RFB/VNC carries keysyms, not physical scancodes.  Shift is idempotent:
+     * sending Shift down plus an uppercase keysym still produces uppercase
+     * on servers that synthesize Shift themselves.  Caps Lock is a toggle,
+     * so applying it here *and* forwarding the Caps Lock key event makes
+     * QEMU's VNC server combine Caps Lock with its synthesized Shift and
+     * turn uppercase into lowercase.  Keep the keysym unshifted by Caps
+     * Lock and let the guest's Caps Lock state decide the case. */
+    int upper = (shift != 0);
+    (void)caps;
 
     switch (code) {
     /* Linux keycodes are physical positions, not alphabetical; map the three

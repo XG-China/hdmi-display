@@ -365,7 +365,8 @@ profile。
 #### 输入和音频
 
 - 输入按 `/dev/input/by-id/*` 稳定路径管理，同一物理设备的多个节点会去重；
-- Shift/Caps 在本地组合，VNC 端得到正确大小写；
+- Shift 在本地组合；Caps Lock 作为按键事件转发，不重复应用到 keysym，
+  避免 QEMU VNC 把大写又变回小写；
 - RDP 用原始 keycode，Windows 自己处理键盘布局；
 - 媒体音频和 RDP 音频都走对应 HDMI PCM；
 - 音频设备按 DRM 卡 PCI slot + ELD monitor 名匹配。

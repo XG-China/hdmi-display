@@ -415,7 +415,8 @@ typedef struct {
 ```
 
 - 键盘：`linux_keysym()` 把 Linux keycode 映射成 X11 keysym，同时保留原始 keycode 给 RDP；
-- Shift/Caps 在本地组合，VNC 端看到正确大小写；
+- Shift 在本地组合；Caps Lock 作为按键事件转发，不重复应用到 keysym，
+  避免 QEMU VNC 同时处理 Caps Lock 和合成 Shift 后把大写变回小写；
 - 鼠标：`REL_X/REL_Y` 累加并 clamp 到 0..65535；`REL_WHEEL` 传给 VNC/RDP；
 - 按键 bitmask 直接对应 RFB 的 1/2/4。
 
